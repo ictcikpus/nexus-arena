@@ -12,4 +12,4 @@ User requested not to run the game locally. The following are post-deploy accept
 8. Open a third browser tab to verify additional player joins; repeat up to eight tabs/devices if practical.
 9. Join a ninth client and confirm the server rejects it.
 10. Disconnect one client and check that the room remains usable by others.
-11. If anything fails, inspect Render logs and the browser console; do not publish as a competitive production game until issues are fixed.
+11. If anything fails, inspect Cloudflare deployment logs and the browser console; do not publish as a competitive production game until issues are fixed.

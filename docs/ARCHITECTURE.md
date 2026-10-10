@@ -1,33 +1,23 @@
-# Architecture — NEXUS ARENA
+# Arsitektur NEXUS ARENA — Cloudflare Edition
 
-## Components
+- **Frontend**: Three.js, Vite, UI HTML/CSS. Dibangun menjadi `client/dist`.
+- **Static assets**: diterbitkan melalui Workers Static Assets dari Worker yang sama.
+- **RoomDirectory Durable Object**: membuat kode room, mencari public room untuk Quick Match, dan memastikan kode privat valid.
+- **ArenaRoom Durable Object**: satu instance bernama untuk tiap kode room; maksimal delapan WebSocket client.
+- **Game authority**: gerakan, collision rintangan, checkpoint, respawn, timer, dan hasil dihitung pada ArenaRoom.
+- **Client protocol**: JSON over WebSocket untuk input dan full-state snapshots. Ini protokol milik proyek, bukan protokol Colyseus.
+- **Storage**: Durable Object SQLite-backed key-value storage untuk memulihkan state room ketika object dihentikan dan diinisialisasi ulang.
 
-- **Client:** Vite + Three.js + `colyseus.js`. Menggambar scene, menerima input, membuat UI dan menginterpolasi pemain lain.
-- **Game server:** Node.js + Colyseus. Room menyimpan state pemain, fase pertandingan, timer, input terkini dan hasil.
-- **Hosting:** Render Blueprint creates one free Node Web Service and one free Static Site (subject to plan availability and platform quotas).
+## Rute
 
-## Authority
+- `GET /health` — health response.
+- `GET /api/resolve?mode=quick` — memilih/membuat public room.
+- `GET /api/resolve?mode=create` — membuat room privat.
+- `GET /api/resolve?mode=join&code=XXXXXX` — memvalidasi kode room.
+- `GET /api/connect?code=XXXXXX&name=...&color=...` dengan WebSocket upgrade — menghubungkan pemain.
 
-Client sends movement intentions (`x`, `z`, `jump`, `sprint`, sequence). Server clamps and rate-limits values, simulates movement, collisions, gaps, checkpoints, falls and finish events. Client-supplied positions and finish times are never accepted as authoritative facts.
+Semua route menggunakan hostname Worker yang sama. Karena itu frontend tidak membutuhkan setting server URL terpisah.
 
-## Protocol
+## Batasan
 
-- `input`: client -> server; movement axes, jump/sprint booleans and monotonically increasing sequence number.
-- `ready`: client -> server; ready toggle.
-- `rematch`: client -> server; request another match after results.
-- `respawn`: server -> relevant client; notification after fall reset.
-- Synchronized state: phase, elapsed time, countdown and map of player display state.
-
-## Room types
-
-- `arena`: public matchmaking through `joinOrCreate`.
-- `private_arena`: room creation and joining by room ID; not part of quick-match pool.
-
-Both have an eight-client maximum.
-
-## Known MVP limitations
-
-- No permanent accounts or durable statistics.
-- Free host may sleep/restart; disconnected players are removed, not seamlessly resumed.
-- Input is basic server-authoritative but not a hardened anti-cheat implementation.
-- The procedural collision layout is intentionally simple. Improve collision shapes and performance after real device tests.
+MVP ini mengirim snapshot state untuk kemudahan pengembangan. Jika jumlah pemain atau room meningkat, optimalkan snapshot/delta, input validation, telemetry, load testing, serta rate limiting. Workers Free memiliki kuota harian, jadi layanan bukan server game berkapasitas tak terbatas.
