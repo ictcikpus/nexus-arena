@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { Client } from 'colyseus.js';
+import { Client } from './network/cloudflare-client.js';
 import './style.css';
 
-const DEFAULT_SERVER_URL = import.meta.env.VITE_SERVER_URL || 'https://nexus-arena-server.onrender.com';
+const DEFAULT_SERVER_URL = import.meta.env.VITE_SERVER_URL || window.location.origin;
 const COLORS = ['#4fe6d1', '#ff7b54', '#a88bff', '#ffe06b', '#77a8ff', '#ff7ecb'];
 const MAX_PLAYERS = 8;
 const FINISH_Z = -103;
@@ -43,7 +43,9 @@ let room = null;
 let stateSnapshot = null;
 let leavingIntentionally = false;
 let toastTimer = null;
-let selectedServerUrl = localStorage.getItem('nexusArenaServerUrl') || DEFAULT_SERVER_URL;
+let storedServerUrl = localStorage.getItem('nexusArenaServerUrl') || '';
+if (storedServerUrl.includes('onrender.com')) storedServerUrl = '';
+let selectedServerUrl = storedServerUrl || DEFAULT_SERVER_URL;
 let keys = new Set();
 let touchMove = { x: 0, z: 0 };
 let touchJumpHeld = false;
@@ -608,7 +610,7 @@ setInterval(() => {
   inputSeq += 1;
   try { room.send('input', { ...input, seq: inputSeq }); } catch (error) { console.warn('Input send failed', error); }
   lastInputSent = performance.now();
-}, 50);
+}, 100);
 
 initThree();
 setConnection('idle', 'SIAP TERHUBUNG');
