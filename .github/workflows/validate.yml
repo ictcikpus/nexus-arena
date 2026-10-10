@@ -1,4 +1,4 @@
-name: Validate project files
+name: Validate NEXUS ARENA
 on:
   push:
     branches: [main, master]
@@ -12,14 +12,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install client dependencies
+      - name: Install frontend dependencies
         working-directory: client
-        run: npm install
-      - name: Build client
+        run: npm install --no-audit --no-fund
+      - name: Build frontend
         working-directory: client
         run: npm run build
-      - name: Install server dependencies
-        working-directory: server
-        run: npm install
-      - name: Check server syntax
-        run: node --check server/src/index.js && node --check server/src/rooms/ArenaRoom.js && node --check server/src/rooms/ArenaState.js
+      - name: Check source syntax
+        run: node --check worker/index.js && node --check client/src/network/cloudflare-client.js && node --check client/src/main.js
