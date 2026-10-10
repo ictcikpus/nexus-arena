@@ -1,0 +1,25 @@
+name: Validate project files
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install client dependencies
+        working-directory: client
+        run: npm install
+      - name: Build client
+        working-directory: client
+        run: npm run build
+      - name: Install server dependencies
+        working-directory: server
+        run: npm install
+      - name: Check server syntax
+        run: node --check server/src/index.js && node --check server/src/rooms/ArenaRoom.js && node --check server/src/rooms/ArenaState.js
