@@ -1,6 +1,6 @@
 {
   "name": "nexus-arena-client",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,6 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "colyseus.js": "^0.16.0",
     "three": "^0.180.0"
   },
   "devDependencies": {
