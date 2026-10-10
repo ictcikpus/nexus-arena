@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0b1022" />
+    <meta name="description" content="NEXUS ARENA — multiplayer obstacle racing 3D langsung dari browser." />
+    <title>NEXUS ARENA — Run. Jump. Win.</title>
+  </head>
+  <body>
+    <canvas id="game-canvas" aria-label="Arena 3D NEXUS ARENA"></canvas>
+    <div class="vignette"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><span></span><span></span><span></span></div>
+        <div><div class="brand-title">NEXUS <b>ARENA</b></div><div class="brand-subtitle">MULTIPLAYER OBSTACLE RUN</div></div>
+      </div>
+      <div id="connection-pill" class="connection-pill"><span class="connection-dot"></span><span id="connection-text">SIAP TERHUBUNG</span></div>
+    </header>
+
+    <main>
+      <section id="menu-screen" class="screen menu-screen active">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR NEXT CHALLENGE STARTS HERE</div>
+          <h1>RUN THE<br/><em>NEXUS.</em></h1>
+          <p class="hero-description">Lompati rintangan. Kuasai timing. Jadilah yang pertama menyentuh garis finis.</p>
+          <div class="feature-row"><span>✦ 3D ARENA</span><span>✦ 8 PLAYERS</span><span>✦ PLAY IN BROWSER</span></div>
+        </div>
+        <div class="panel menu-panel">
+          <div class="panel-heading"><div><div class="panel-kicker">PLAYER SETUP</div><h2>Siap berlari?</h2></div><div class="panel-index">01 <span>/ 03</span></div></div>
+          <label class="field-label" for="player-name">NAMA PEMAIN</label>
+          <input id="player-name" class="text-input" maxlength="16" autocomplete="nickname" placeholder="Contoh: NexusRunner" value="Runner" />
+          <div class="field-label palette-label">PILIH WARNA KARAKTER</div>
+          <div id="color-palette" class="color-palette">
+            <button class="color-swatch selected" data-color="#4fe6d1" aria-label="Cyan" style="--swatch:#4fe6d1"></button>
+            <button class="color-swatch" data-color="#ff7b54" aria-label="Oranye" style="--swatch:#ff7b54"></button>
+            <button class="color-swatch" data-color="#a88bff" aria-label="Ungu" style="--swatch:#a88bff"></button>
+            <button class="color-swatch" data-color="#ffe06b" aria-label="Kuning" style="--swatch:#ffe06b"></button>
+            <button class="color-swatch" data-color="#77a8ff" aria-label="Biru" style="--swatch:#77a8ff"></button>
+            <button class="color-swatch" data-color="#ff7ecb" aria-label="Pink" style="--swatch:#ff7ecb"></button>
+          </div>
+          <button id="quick-match" class="btn btn-primary"><span>QUICK MATCH</span><span class="btn-arrow">↗</span></button>
+          <button id="create-room" class="btn btn-secondary"><span>BUAT ROOM PRIVAT</span><span>＋</span></button>
+          <div class="join-room-row"><input id="room-code" class="text-input" maxlength="16" placeholder="Kode room teman" aria-label="Kode room"/><button id="join-room" class="btn btn-join">GABUNG</button></div>
+          <details class="server-settings"><summary>Pengaturan koneksi server</summary><label class="field-label" for="server-url">URL BACKEND HTTPS</label><input id="server-url" class="text-input" spellcheck="false" placeholder="https://nama-server.onrender.com"/><button id="save-server" class="btn btn-small">SIMPAN ALAMAT SERVER</button><p class="small-note">Isi hanya jika alamat server pada dashboard berbeda dari konfigurasi awal.</p></details>
+          <div id="menu-status" class="menu-status">Pilih Quick Match atau buat room privat untuk mengundang teman.</div>
+          <div class="panel-footer"><span>NO DOWNLOAD REQUIRED</span><span>BUILD 1.0.0</span></div>
+        </div>
+      </section>
+
+      <section id="lobby-screen" class="screen centered-screen">
+        <div class="panel lobby-panel">
+          <div class="panel-kicker">MULTIPLAYER LOBBY</div><h2>Siapkan tim.</h2>
+          <p class="muted">Pertandingan dimulai saat minimal dua pemain menekan Siap.</p>
+          <div class="room-code-card"><div><span class="field-label">KODE ROOM</span><strong id="lobby-room-code">--------</strong></div><button id="copy-room" class="btn btn-copy">SALIN KODE</button></div>
+          <div class="lobby-meta"><span><i class="mini-dot"></i><b id="player-count">1</b>/8 PEMAIN</span><span id="lobby-phase">MENUNGGU PEMAIN</span></div>
+          <div id="players-grid" class="players-grid"></div>
+          <div id="lobby-message" class="lobby-message">Bagikan kode room agar teman dapat bergabung.</div>
+          <div class="lobby-actions"><button id="ready-button" class="btn btn-primary">SAYA SIAP <span>✓</span></button><button id="leave-room" class="btn btn-ghost">KELUAR</button></div>
+        </div>
+      </section>
+
+      <section id="results-screen" class="screen centered-screen">
+        <div class="panel results-panel">
+          <div class="results-ribbon">MATCH COMPLETE</div><div class="panel-kicker">ARENA REPORT</div><h2 id="results-title">Selesai!</h2><p class="muted" id="results-subtitle">Hasil pertandingan telah dikunci oleh server.</p>
+          <div id="results-list" class="results-list"></div>
+          <div class="results-actions"><button id="rematch-button" class="btn btn-primary">REMATCH <span>↻</span></button><button id="home-button" class="btn btn-ghost">MENU UTAMA</button></div>
+          <div id="rematch-message" class="menu-status"></div>
+        </div>
+      </section>
+
+      <section id="hud" class="hud hidden">
+        <div class="hud-top-left"><div class="hud-label">TIME ELAPSED</div><div id="timer" class="timer">00:00.0</div><div id="checkpoint-label" class="checkpoint-label">CHECKPOINT 01</div></div>
+        <div class="hud-top-right"><div class="hud-label">RACE POSITION</div><div id="position" class="race-position">1 <small>/ 1</small></div><div id="race-status" class="race-status">GO!</div></div>
+        <div class="progress-track"><div id="progress-fill" class="progress-fill"></div><span class="progress-start">START</span><span class="progress-end">FINISH</span></div>
+        <div class="hud-bottom"><div class="control-hint desktop-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>MOVE</span><kbd>SPACE</kbd><span>JUMP</span><kbd>SHIFT</kbd><span>SPRINT</span></div><button id="quit-game" class="btn btn-ghost btn-quit">KELUAR <span>ESC</span></button></div>
+        <div id="touch-controls" class="touch-controls">
+          <div id="joystick" class="joystick"><div id="joystick-knob" class="joystick-knob"></div></div>
+          <div class="touch-actions"><button id="touch-sprint" class="touch-action sprint-action">SPRINT</button><button id="touch-jump" class="touch-action jump-action">JUMP <span>↑</span></button></div>
+        </div>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="loading-overlay" class="loading-overlay hidden"><div class="loading-mark"><span></span><span></span><span></span></div><div id="loading-title">MENGHUBUNGKAN</div><p id="loading-copy">Mencari pintu masuk ke arena...</p></div>
+    <footer class="site-footer"><span>NEXUS ARENA <i>·</i> RUN. JUMP. OUTSMART. WIN.</span><span>PLAY FAIR. KEEP MOVING.</span></footer>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
