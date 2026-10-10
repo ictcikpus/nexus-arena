@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: nexus-arena-server
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MAX_PLAYERS
+        value: "8"
+
+  - type: web
+    runtime: static
+    name: nexus-arena
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_SERVER_URL
+        value: https://nexus-arena-server.onrender.com

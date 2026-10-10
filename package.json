@@ -1,0 +1,10 @@
+{
+  "name": "nexus-arena",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser-based 3D multiplayer obstacle racing game",
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "start:server": "npm --prefix server start"
+  }
+}
